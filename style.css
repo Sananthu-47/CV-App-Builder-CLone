@@ -427,12 +427,18 @@ textarea{
 }
 
 /* preview section */
+#preview-sc{
+    width: 1100px;
+    height: 100%;
+    margin: auto;
+}
 .preview-cnt{
     border-radius: 5px;
     display: grid;
     grid-template-columns: 32% auto;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     overflow: hidden;
+    /* height: 100%; */
 }
 
 .preview-cnt-l{
@@ -524,8 +530,8 @@ textarea{
 .experiences-items.preview-blk-list .preview-item span:nth-child(4),
 .experiences-items.preview-blk-list .preview-item span:nth-child(5){
     margin-right: 1rem;
-    background-color: var(--clr-green);
-    color: var(--clr-white);
+    /* background-color: yellow; */
+    color: #0081ff;
     padding: 0 1rem;
     border-radius: 0.6rem;
 }

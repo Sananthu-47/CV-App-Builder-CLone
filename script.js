@@ -57,6 +57,7 @@ let nameDsp = document.getElementById('fullname_dsp'),
     projectsDsp = document.getElementById('projects_dsp'),
     achievementsDsp = document.getElementById('achievements_dsp'),
     skillsDsp = document.getElementById('skills_dsp'),
+    languagesDsp = document.getElementById('languages_dsp'),
     educationsDsp = document.getElementById('educations_dsp'),
     experiencesDsp = document.getElementById('experiences_dsp');
 
@@ -97,6 +98,7 @@ const getUserInputs = () => {
     // education
     let eduSchoolElem = document.querySelectorAll('.edu_school'),
     eduDegreeElem = document.querySelectorAll('.edu_degree'),
+    eduMastersElem = document.querySelectorAll('.edu_masters'),
     eduCityElem = document.querySelectorAll('.edu_city'),
     eduStartDateElem = document.querySelectorAll('.edu_start_date'),
     eduGraduationDateElem = document.querySelectorAll('.edu_graduation_date'),
@@ -107,6 +109,7 @@ const getUserInputs = () => {
     projDescriptionElem = document.querySelectorAll('.proj_description');
 
     let skillElem = document.querySelectorAll('.skill');
+    let languagesElem = document.querySelectorAll('.languages');
 
     // event listeners for form validation
     firstnameElem.addEventListener('keyup', (e) => validateFormData(e.target, validType.TEXT, 'First Name'));
@@ -127,6 +130,7 @@ const getUserInputs = () => {
     expDescriptionElem.forEach(item => item.addEventListener('keyup', (e) => validateFormData(e.target, validType.ANY, 'Description')));
     eduSchoolElem.forEach(item => item.addEventListener('keyup', (e) => validateFormData(e.target, validType.ANY, 'School')));
     eduDegreeElem.forEach(item => item.addEventListener('keyup', (e) => validateFormData(e.target, validType.ANY, 'Degree')));
+    eduMastersElem.forEach(item => item.addEventListener('keyup', (e) => validateFormData(e.target, validType.ANY, 'Masters')));
     eduCityElem.forEach(item => item.addEventListener('keyup', (e) => validateFormData(e.target, validType.ANY, 'City')));
     eduStartDateElem.forEach(item => item.addEventListener('blur', (e) => validateFormData(e.target, validType.ANY, 'Start Date')));
     eduGraduationDateElem.forEach(item => item.addEventListener('blur', (e) => validateFormData(e.target, validType.ANY, 'Graduation Date')));
@@ -135,6 +139,7 @@ const getUserInputs = () => {
     projLinkElem.forEach(item => item.addEventListener('keyup', (e) => validateFormData(e.target, validType.ANY, 'Link')));
     projDescriptionElem.forEach(item => item.addEventListener('keyup', (e) => validateFormData(e.target, validType.ANY, 'Description')));
     skillElem.forEach(item => item.addEventListener('keyup', (e) => validateFormData(e.target, validType.ANY, 'skill')));
+    languagesElem.forEach(item => item.addEventListener('keyup', (e) => validateFormData(e.target, validType.ANY, 'languages')));
 
     return {
         firstname: firstnameElem.value,
@@ -147,9 +152,10 @@ const getUserInputs = () => {
         summary: summaryElem.value,
         achievements: fetchValues(['achieve_title', 'achieve_description'], achievementsTitleElem, achievementsDescriptionElem),
         experiences: fetchValues(['exp_title', 'exp_organization', 'exp_location', 'exp_start_date', 'exp_end_date', 'exp_description'], expTitleElem, expOrganizationElem, expLocationElem, expStartDateElem, expEndDateElem, expDescriptionElem),
-        educations: fetchValues(['edu_school', 'edu_degree', 'edu_city', 'edu_start_date', 'edu_graduation_date', 'edu_description'], eduSchoolElem, eduDegreeElem, eduCityElem, eduStartDateElem, eduGraduationDateElem, eduDescriptionElem),
+        educations: fetchValues(['edu_school', 'edu_degree', 'edu_masters', 'edu_city', 'edu_start_date', 'edu_graduation_date', 'edu_description'], eduSchoolElem, eduDegreeElem, eduMastersElem, eduCityElem, eduStartDateElem, eduGraduationDateElem, eduDescriptionElem),
         projects: fetchValues(['proj_title', 'proj_link', 'proj_description'], projTitleElem, projLinkElem, projDescriptionElem),
-        skills: fetchValues(['skill'], skillElem)
+        skills: fetchValues(['skill'], skillElem),
+        languages: fetchValues(['languages'], languagesElem)
     }
 };
 
@@ -223,6 +229,7 @@ const displayCV = (userData) => {
     showListData(userData.projects, projectsDsp);
     showListData(userData.achievements, achievementsDsp);
     showListData(userData.skills, skillsDsp);
+    showListData(userData.languages, languagesDsp);
     showListData(userData.educations, educationsDsp);
     showListData(userData.experiences, experiencesDsp);
 }
@@ -242,7 +249,30 @@ function previewImage(){
     }
 }
 
-// print CV
-function printCV(){
-    window.print();
+function down(){
+    const { jsPDF } = window.jspdf;
+
+    html2canvas(document.querySelector('#preview-sc'), { scale: 2 })
+    .then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'pt', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const aspectRatio = imgWidth / imgHeight;
+
+        let finalWidth, finalHeight;
+        if (pdfWidth / aspectRatio <= pdfHeight) {
+            finalWidth = pdfWidth;
+            finalHeight = pdfWidth / aspectRatio;
+        } else {
+            finalHeight = pdfHeight;
+            finalWidth = pdfHeight * aspectRatio;
+        }
+
+        pdf.addImage(imgData, 'PNG', -10, 0, finalWidth, finalHeight);
+        pdf.save('document.pdf');
+    });
 }
